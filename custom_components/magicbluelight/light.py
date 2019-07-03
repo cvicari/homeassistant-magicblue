@@ -13,13 +13,6 @@ from homeassistant.components.light import (
 
 import homeassistant.helpers.config_validation as cv
 
-# Home Assistant depends on 3rd party packages for API specific code.
-REQUIREMENTS = [
-    'magicblue==0.5.0',
-    'bluepy==1.1.2',
-    'webcolors'
-]
-
 CONF_NAME = 'name'
 CONF_ADDRESS = 'address'
 CONF_VERSION = 'version'

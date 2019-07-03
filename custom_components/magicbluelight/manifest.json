@@ -1,0 +1,12 @@
+{
+  "domain": "magicbluelight",
+  "name": "MagicBlue custom component for Home Assistant",
+  "documentation": "https://github.com/Betree/homeassistant-magicblue",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": [
+    "magicblue==0.6.0",
+    "bluepy==1.1.4",
+    "webcolors"
+  ]
+}
