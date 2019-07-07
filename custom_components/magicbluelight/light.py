@@ -16,12 +16,17 @@ import homeassistant.helpers.config_validation as cv
 CONF_NAME = 'name'
 CONF_ADDRESS = 'address'
 CONF_VERSION = 'version'
+CONF_HCI_DEVICE_ID = 'hci_device_id'
+DEFAULT_VERSION = 9
+DEFAULT_HCI_DEVICE_ID = 0
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_NAME): cv.string,
     vol.Required(CONF_ADDRESS): cv.string,
-    vol.Optional(CONF_VERSION, default=9): cv.positive_int
+    vol.Optional(CONF_VERSION, default=DEFAULT_VERSION): cv.positive_int,
+    vol.Optional(CONF_HCI_DEVICE_ID, default=DEFAULT_HCI_DEVICE_ID):
+        cv.positive_int
 })
 
 _LOGGER = logging.getLogger(__name__)
@@ -75,11 +80,12 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     bulb_name = config.get(CONF_NAME)
     bulb_mac_address = config.get(CONF_ADDRESS)
     bulb_version = config.get(CONF_VERSION)
+    hci_device_id = config.get(CONF_HCI_DEVICE_ID)
 
     bulb = MagicBlue(bulb_mac_address, bulb_version)
 
     # Add devices
-    add_devices([MagicBlueLight(hass, bulb, bulb_name)])
+    add_devices([MagicBlueLight(hass, bulb, bulb_name, hci_device_id)])
 
 
 class MagicBlueLight(Light):
@@ -96,6 +102,7 @@ class MagicBlueLight(Light):
         self._brightness = 255
         self._available = False
         self._effects = [e for e in Effect.__members__.keys()]
+        self._hci_device_id = hci_device_id
 
     @property
     def name(self):
@@ -141,7 +148,7 @@ class MagicBlueLight(Light):
 
         try:
             if not self._light.test_connection():
-                self._light.connect()
+                self._light.connect(self._hci_device_id)
 
             device_info = self._light.get_device_info()
 
@@ -161,7 +168,7 @@ class MagicBlueLight(Light):
         _LOGGER.debug("%s.turn_on()", self)
         if not self._light.test_connection():
             try:
-                self._light.connect()
+                self._light.connect(self._hci_device_id)
             except Exception as e:
                 _LOGGER.error('%s.turn_on(): Could not connect to %s', self, self._light)
                 return
@@ -191,7 +198,7 @@ class MagicBlueLight(Light):
         _LOGGER.debug("%s: MagicBlueLight.turn_off()", self)
         if not self._light.test_connection():
             try:
-                self._light.connect()
+                self._light.connect(self._hci_device_id)
             except Exception as e:
                 _LOGGER.error('%s.turn_off(): Could not connect to %s', self, self._light)
                 return
