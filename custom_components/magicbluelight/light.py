@@ -8,7 +8,7 @@ import voluptuous as vol
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, ATTR_RGB_COLOR, ATTR_EFFECT,
     SUPPORT_COLOR, SUPPORT_BRIGHTNESS, SUPPORT_EFFECT,
-    Light, PLATFORM_SCHEMA
+    LightEntity, PLATFORM_SCHEMA
 )
 
 import homeassistant.helpers.config_validation as cv
@@ -88,9 +88,9 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     add_devices([MagicBlueLight(hass, bulb, bulb_name, hci_device_id)])
 
 
-class MagicBlueLight(Light):
+class MagicBlueLight(LightEntity):
     """Representation of an MagicBlue Light."""
-    def __init__(self, hass, light, name):
+    def __init__(self, hass, light, name, hci_device_id):
         """Initialize an MagicBlueLight."""
         from magicblue import Effect
 
